@@ -1,69 +1,115 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Suspense } from "react";
+import { projects } from "@/content/projects";
+import { about } from "@/content/about";
+import { StatusStrip, StatusStripSkeleton } from "@/components/ui/StatusStrip";
+import { ModeController } from "@/components/ModeController";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-3xl px-6 pt-24 pb-16">
+        <p className="text-sm font-mono text-accent mb-4">
+          Available · September 2026 · Leiden
+        </p>
+        <h1 className="text-h1 font-semibold tracking-tight text-fg leading-tight mb-4">
+          I build things that keep running.
+        </h1>
+        <p className="text-lg text-fg-muted leading-relaxed max-w-xl mb-8">
+          Third-year Computer Science student at Leiden University, looking for
+          a six-month graduation internship at a company where the software has
+          to keep working.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="#work"
+            className="inline-flex items-center px-5 py-2.5 rounded bg-accent text-n-950 text-sm font-medium hover:bg-accent-hov transition-colors"
+          >
+            View work
+          </a>
+          <a
+            href="/cv.pdf"
+            className="inline-flex items-center px-5 py-2.5 rounded border border-border text-fg text-sm font-medium hover:border-fg-muted transition-colors"
+          >
+            Download CV
+            <span className="sr-only"> (PDF)</span>
+          </a>
+        </div>
+      </section>
+
+      {/* ── Live status ──────────────────────────────────────── */}
+      <div className="mx-auto max-w-3xl px-6 pb-16">
+        <Suspense fallback={<StatusStripSkeleton />}>
+          <StatusStrip />
+        </Suspense>
+      </div>
+
+      {/* ── Work ─────────────────────────────────────────────── */}
+      <section id="work" className="mx-auto max-w-3xl px-6 pb-24">
+        <h2 className="text-h2 font-semibold text-fg mb-8">Work</h2>
+        <ol className="flex flex-col gap-px border border-border rounded overflow-hidden">
+          {projects.map((project, i) => (
+            <li key={project.slug} className="bg-bg-raised">
+              <Link
+                href={`/work/${project.slug}`}
+                className="group flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 px-5 py-5 hover:bg-border/30 transition-colors"
+              >
+                <span className="shrink-0 w-5 text-sm font-mono text-fg-muted pt-0.5">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-fg group-hover:text-accent transition-colors mb-1">
+                    {project.title}
+                  </p>
+                  <p className="text-sm text-fg-muted leading-relaxed">
+                    {project.tagline}
+                  </p>
+                </div>
+                <span className="shrink-0 text-fg-muted text-sm hidden sm:block mt-0.5">
+                  →
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ── Contact ──────────────────────────────────────────── */}
+      <section id="contact" className="border-t border-border">
+        <div className="mx-auto max-w-3xl px-6 py-24">
+          <h2 className="text-h2 font-semibold text-fg mb-2">Contact</h2>
+          <p className="text-fg-muted text-sm mb-8 max-w-md">
+            Available for a six-month graduation internship from September 2026.
+            Based in Leiden — open to on-site, hybrid, or remote at Dutch
+            companies.
           </p>
+          <div className="flex flex-col gap-3">
+            <a
+              href={`mailto:${about.contact.email}`}
+              className="inline-flex items-center gap-2 text-fg font-mono text-sm hover:text-accent transition-colors"
+            >
+              <span aria-hidden="true">→</span>
+              {about.contact.email}
+            </a>
+            <a
+              href={about.contact.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-fg-muted font-mono text-sm hover:text-fg transition-colors"
+            >
+              <span aria-hidden="true">→</span>
+              {about.contact.github.replace("https://", "")}
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Terminal overlay — client only; Suspense required for useSearchParams.
+          Without JS this never mounts, so the UI content above stays visible. */}
+      <Suspense fallback={null}>
+        <ModeController />
+      </Suspense>
+    </>
   );
 }

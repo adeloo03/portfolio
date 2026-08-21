@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
+/* ─── Raw palette ──────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Zinc neutral scale */
+  --n-50:  #fafafa;
+  --n-100: #f4f4f5;
+  --n-200: #e4e4e7;
+  --n-300: #d4d4d8;
+  --n-400: #a1a1aa;
+  --n-500: #71717a;
+  --n-600: #52525b;
+  --n-700: #3f3f46;
+  --n-800: #27272a;
+  --n-900: #18181b;
+  --n-950: #09090b;
+
+  /* Amber accent — not cyan, not purple */
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+
+  /* Typography */
+  --text-h1: 2.25rem;   /* 36px */
+  --text-h2: 1.375rem;  /* 22px */
 }
 
+/* ─── Semantic tokens — dark by default ────────────────────────── */
+
+:root {
+  --bg:         var(--n-950);
+  --bg-raised:  var(--n-900);
+  --border:     var(--n-800);
+  --fg:         var(--n-50);
+  --fg-muted:   var(--n-400);
+  --accent:     var(--amber-500);
+  --accent-hov: var(--amber-400);
+}
+
+/* Light mode — toggled via .light class on <html> */
+.light {
+  --bg:         var(--n-50);
+  --bg-raised:  #ffffff;
+  --border:     var(--n-200);
+  --fg:         var(--n-950);
+  --fg-muted:   var(--n-500);
+  --accent:     var(--amber-600);
+  --accent-hov: var(--amber-500);
+}
+
+/* ─── Tailwind bindings (runtime, not build-time) ───────────────── */
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg:        var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-border:    var(--border);
+  --color-fg:        var(--fg);
+  --color-fg-muted:  var(--fg-muted);
+  --color-accent:    var(--accent);
+  --color-accent-hov: var(--accent-hov);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ─── Base ──────────────────────────────────────────────────────── */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 { font-size: var(--text-h1); }
+h2 { font-size: var(--text-h2); }
+
+/* ─── Focus ─────────────────────────────────────────────────────── */
+
+/* Keyboard-only focus ring that overrides Tailwind's preflight reset */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ─── Motion ────────────────────────────────────────────────────── */
+
+/* Respect system preference — no typewriter, no fly-in, nothing. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
