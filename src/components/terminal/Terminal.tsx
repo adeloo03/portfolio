@@ -264,7 +264,7 @@ export function Terminal({ onSwitchToGui }: TerminalProps) {
           onKeyDown={handleKeyDown}
           className="flex-1 bg-transparent border-none outline-none text-fg"
           // 16px prevents iOS Safari from zooming the viewport on focus
-          style={{ fontSize: "16px", caretColor: "var(--accent)" }}
+          style={{ fontSize: "16px", caretColor: "var(--accent)", outline: "none" }}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
