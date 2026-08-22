@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { projects } from "@/content/projects";
 import { about } from "@/content/about";
 import { StatusStrip, StatusStripSkeleton } from "@/components/ui/StatusStrip";
-import { ModeController } from "@/components/ModeController";
 
 export default function HomePage() {
   return (
@@ -105,11 +104,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Terminal overlay — client only; Suspense required for useSearchParams.
-          Without JS this never mounts, so the UI content above stays visible. */}
-      <Suspense fallback={null}>
-        <ModeController />
-      </Suspense>
     </>
   );
 }

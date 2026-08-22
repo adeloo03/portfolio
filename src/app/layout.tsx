@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ModeController } from "@/components/ModeController";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -110,6 +112,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="main-content" className="flex-1">
           {children}
         </main>
+
+        {/* Terminal overlay — sibling of <main> so inert on <main> doesn't trap the terminal */}
+        <Suspense fallback={null}>
+          <ModeController />
+        </Suspense>
 
         <footer className="border-t border-border">
           <div className="mx-auto max-w-3xl px-6 h-14 flex items-center justify-between">
