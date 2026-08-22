@@ -10,7 +10,19 @@ function formatAge(iso: string): string {
 
 export async function StatusStrip() {
   const result = await fetchStatus();
-  if (!result.ok) return null;
+
+  if (!result.ok) {
+    return (
+      <div
+        role="status"
+        aria-label="Home server status"
+        className="flex items-center gap-3 px-4 py-2.5 rounded border border-border text-sm font-mono text-fg-muted"
+      >
+        <span className="inline-block w-2 h-2 rounded-full bg-border shrink-0" aria-hidden="true" />
+        <span>Homelab — status not available</span>
+      </div>
+    );
+  }
 
   const { data, stale } = result;
 

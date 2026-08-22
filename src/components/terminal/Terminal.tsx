@@ -39,6 +39,9 @@ export function Terminal({ onSwitchToGui }: TerminalProps) {
     (href: string) => {
       if (href.startsWith("http")) {
         window.open(href, "_blank", "noopener,noreferrer");
+      } else if (/\.\w+$/.test(href)) {
+        // Static file — let the browser handle download/open rather than the client router
+        window.location.href = href;
       } else {
         router.push(href);
       }

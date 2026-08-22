@@ -36,9 +36,8 @@ export const statusCommand: Command = {
     if (!result.ok) {
       return {
         output: (
-          <p className="text-red-400">
-            Status unavailable — NEXT_PUBLIC_STATUS_GIST_URL not configured or
-            unreachable.
+          <p className="text-fg-muted">
+            Homelab status unavailable — data not reachable right now.
           </p>
         ),
       };

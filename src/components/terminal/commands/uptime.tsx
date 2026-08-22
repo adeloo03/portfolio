@@ -10,9 +10,8 @@ export const uptimeCommand: Command = {
     if (!result.ok) {
       return {
         output: (
-          <p className="text-red-400">
-            Uptime unavailable — NEXT_PUBLIC_STATUS_GIST_URL not configured or
-            unreachable.
+          <p className="text-fg-muted">
+            Uptime unavailable — homelab data not reachable right now.
           </p>
         ),
       };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Terminal } from "@/components/terminal/Terminal";
 
@@ -9,6 +9,9 @@ import { Terminal } from "@/components/terminal/Terminal";
  * Rendered inside Suspense in page.tsx (useSearchParams requires it).
  * Without JS this component never executes, leaving the server-rendered
  * UI content visible — satisfying the no-JS requirement.
+ *
+ * When the overlay is active, the underlying page receives [inert] so
+ * keyboard focus cannot reach hidden content (WCAG 2.1 AA focus trap).
  */
 export function ModeController() {
   const searchParams = useSearchParams();
@@ -16,8 +19,26 @@ export function ModeController() {
 
   const isUiMode = searchParams.get("view") === "ui";
 
+  // Apply/remove inert on the underlying page content when the overlay is shown.
+  useEffect(() => {
+    const targets = [
+      document.getElementById("main-content"),
+      document.querySelector("header"),
+      document.querySelector("footer"),
+    ].filter(Boolean) as HTMLElement[];
+
+    if (!isUiMode) {
+      targets.forEach((el) => el.setAttribute("inert", ""));
+    } else {
+      targets.forEach((el) => el.removeAttribute("inert"));
+    }
+
+    return () => {
+      targets.forEach((el) => el.removeAttribute("inert"));
+    };
+  }, [isUiMode]);
+
   const switchToGui = useCallback(() => {
-    // Preserve any other search params.
     const params = new URLSearchParams(searchParams.toString());
     params.set("view", "ui");
     router.push(`?${params.toString()}`, { scroll: false });
