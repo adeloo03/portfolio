@@ -14,10 +14,12 @@ public sealed class PublisherWorker(
 {
     private static readonly TimeSpan PublishInterval = TimeSpan.FromMinutes(15);
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    };
+    // Written by homelab/scripts/set-state.sh. Read on every publish, so a
+    // restore test shows up on the site without restarting this container.
+    private const string StatePath = "/state/status-state.json";
+
+    // Nulls are written, not omitted: the contract is `string | null`.
+    private static readonly JsonSerializerOptions JsonOptions = new();
 
     private readonly string _gistId  = RequireEnv("GITHUB_GIST_ID");
     private readonly string _token   = RequireEnv("GITHUB_TOKEN");
@@ -57,19 +59,55 @@ public sealed class PublisherWorker(
         }
     }
 
-    private static async Task<StatusSnapshot> BuildSnapshot(CancellationToken ct)
+    private async Task<StatusSnapshot> BuildSnapshot(CancellationToken ct)
     {
         var uptimeDays = ReadHostUptimeDays();
         var (up, total) = await ReadContainerCounts(ct);
+        var state = ReadState();
 
         return new StatusSnapshot(
             UpdatedAt:       DateTime.UtcNow.ToString("O"),
             UptimeDays:      Math.Round(uptimeDays, 2),
             ServicesUp:      up,
             ServicesTotal:   total,
-            LastIncident:    Environment.GetEnvironmentVariable("LAST_INCIDENT"),
-            LastRestoreTest: Environment.GetEnvironmentVariable("LAST_RESTORE_TEST"));
+            LastIncident:    state.LastIncident,
+            LastRestoreTest: state.LastRestoreTest);
     }
+
+    private sealed record State(
+        [property: JsonPropertyName("lastIncident")]    string? LastIncident,
+        [property: JsonPropertyName("lastRestoreTest")] string? LastRestoreTest);
+
+    // The state file wins when it exists; env vars are the fallback for
+    // setups without it.
+    private State ReadState()
+    {
+        if (File.Exists(StatePath))
+        {
+            try
+            {
+                var state = JsonSerializer.Deserialize<State>(File.ReadAllText(StatePath));
+                if (state is not null)
+                    return state with
+                    {
+                        LastIncident    = NullIfEmpty(state.LastIncident),
+                        LastRestoreTest = NullIfEmpty(state.LastRestoreTest),
+                    };
+            }
+            catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+            {
+                logger.LogWarning(ex, "Ignoring unreadable {Path}; using env vars", StatePath);
+            }
+        }
+
+        return new State(
+            NullIfEmpty(Environment.GetEnvironmentVariable("LAST_INCIDENT")),
+            NullIfEmpty(Environment.GetEnvironmentVariable("LAST_RESTORE_TEST")));
+    }
+
+    // An empty env var (LAST_INCIDENT=) means "none", not an empty date.
+    private static string? NullIfEmpty(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value;
 
     private static double ReadHostUptimeDays()
     {
@@ -81,8 +119,10 @@ public sealed class PublisherWorker(
 
     private static async Task<(int up, int total)> ReadContainerCounts(CancellationToken ct)
     {
-        using var client = new DockerClientConfiguration(
-            new Uri("unix:///var/run/docker.sock")).CreateClient();
+        // DOCKER_HOST points at the read-only socket proxy (homelab/compose.yaml).
+        var dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST")
+            ?? "unix:///var/run/docker.sock";
+        using var client = new DockerClientConfiguration(new Uri(dockerHost)).CreateClient();
 
         var containers = await client.Containers.ListContainersAsync(
             new ContainersListParameters { All = true }, ct);

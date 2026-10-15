@@ -7,6 +7,7 @@
 # git-ignored. Review it, move secrets to .env, then copy the services into
 # compose.yaml by hand.
 set -euo pipefail
+umask 077   # the output holds secrets: never readable by others, not even briefly
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 out="$here/../compose.generated.yaml"

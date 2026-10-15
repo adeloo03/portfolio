@@ -51,40 +51,21 @@ Go to https://github.com/settings/tokens → **Generate new token (classic)**.
 Select **only** the `gist` scope. This token can read and write your gists, and
 nothing else. If it leaks, the blast radius is your gists.
 
-### 3. Configure the env file
+### 3. Configure and run
+
+The publisher runs from [`homelab/compose.yaml`](../homelab/compose.yaml),
+alongside everything else on the server:
 
 ```bash
-cp .env.example .env
-# Edit .env and fill in GITHUB_TOKEN and GITHUB_GIST_ID.
-```
-
-Set `LAST_INCIDENT` and `LAST_RESTORE_TEST` to ISO dates (e.g. `2025-03-14`)
-when those events occur. Leave them blank to publish `null`.
-
-### 4. Build the image
-
-Run this on the home server, from the `status-publisher/` directory:
-
-```bash
-docker build -t status-publisher .
-```
-
-### 5. Run the container
-
-```bash
-docker run -d \
-  --name status-publisher \
-  --restart unless-stopped \
-  -v /proc/uptime:/proc/uptime:ro \
-  -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  --env-file /path/to/status-publisher/.env \
-  status-publisher
+cd ~/portfolio/homelab
+cp .env.example .env          # fill in GITHUB_TOKEN and GITHUB_GIST_ID
+docker compose up -d --build docker-proxy status-publisher
+docker compose logs -f status-publisher
 ```
 
 The container publishes immediately on start, then every 15 minutes.
-Check the logs with `docker logs status-publisher`.
 
-### 6. Point the portfolio at the raw Gist URL
+### 4. Point the portfolio at the raw Gist URL
 
 The raw URL has this shape:
 
@@ -97,18 +78,24 @@ stale or unreachable.
 
 ## Updating incident dates
 
-Edit `.env` on the server, then restart the container:
-
 ```bash
-docker restart status-publisher
+homelab/scripts/set-state.sh lastIncident 2026-10-16
+homelab/scripts/set-state.sh lastRestoreTest today    # restore-test.sh does this itself
 ```
 
-The next publish (within seconds of restart) will include the new values.
+This writes `homelab/state/status-state.json`, mounted read-only at `/state`.
+The publisher reads it on every run; no restart needed. Without that file it
+falls back to the `LAST_INCIDENT` / `LAST_RESTORE_TEST` env vars. Empty values
+are published as `null`.
 
 ## Security notes
 
-- The Docker socket is mounted read-only (`:ro`). The publisher can list
-  containers but cannot create, stop, or remove them.
+- The publisher never sees the Docker socket. A `:ro` mount would not help:
+  it stops the socket file being changed, not API calls through it, and full
+  Docker API access is root on the host. Instead it talks to
+  [docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy),
+  which allows `GET /containers` and nothing else, on an internal network
+  with no internet access.
 - `/proc/uptime` is mounted read-only for host uptime. The container cannot
   write to `/proc`.
 - The container runs as a non-root user (`appuser`).

@@ -1,25 +1,47 @@
 # Everything that runs on the home server, in one reproducible file.
 # Secrets come from .env next to this file (see .env.example) and are never committed.
 #
-# Only status-publisher is written by hand. The other services are generated from
+# Only the services below are written by hand. The others are generated from
 # the running containers with scripts/generate-compose.sh, reviewed, stripped of
-# secrets and addresses, and pasted below.
+# secrets and addresses, and pasted at the bottom.
 name: homelab
 
 services:
+  # status-publisher needs one thing from Docker: the container list. Mounting
+  # the socket into it — even with :ro — would give it the full Docker API,
+  # which is root on the host. This proxy lets only GET /containers through,
+  # on a network with no route to the internet.
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    restart: unless-stopped
+    environment:
+      CONTAINERS: 1   # allow GET /containers/*
+      POST: 0         # no create, start, stop, exec, ...
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - docker-api
+
   status-publisher:
     build: ../status-publisher
     image: status-publisher:local
     restart: unless-stopped
+    depends_on:
+      - docker-proxy
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:?set GITHUB_TOKEN in .env}
       GITHUB_GIST_ID: ${GITHUB_GIST_ID:?set GITHUB_GIST_ID in .env}
-    group_add:
-      - "${DOCKER_GID:-999}"
+      DOCKER_HOST: tcp://docker-proxy:2375
     volumes:
       - /proc/uptime:/proc/uptime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       # lastIncident / lastRestoreTest, written by scripts/set-state.sh
       - ./state:/state:ro
+    networks:
+      - docker-api   # to the proxy
+      - default      # out to the GitHub API
 
   # ── Generated services go here ────────────────────────────────────
+
+networks:
+  docker-api:
+    internal: true

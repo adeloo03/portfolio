@@ -5,9 +5,6 @@
 # to check the generated compose file against.
 set -euo pipefail
 
-echo "docker group id: $(getent group docker | cut -d: -f3)"
-echo
-
 docker ps -a --format '{{.Names}}' | while read -r name; do
   docker inspect --format '== {{.Name}}
 image:   {{.Config.Image}}
