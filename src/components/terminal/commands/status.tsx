@@ -1,13 +1,10 @@
 import type { Command } from "./types";
 import { fetchStatusClient } from "@/lib/status-client";
+import { formatAge, formatDaysAgo } from "@/lib/format";
 
-function formatAge(iso: string): string {
-  const minutes = Math.round(
-    (Date.now() - new Date(iso).getTime()) / 60_000
-  );
-  if (minutes < 2) return "just now";
-  if (minutes < 60) return `${minutes} min ago`;
-  return `${Math.round(minutes / 60)}h ago`;
+// "2026-10-15 (3 days ago)", or a dash when it has not happened yet.
+function dated(isoDate: string | null): string {
+  return isoDate ? `${isoDate} (${formatDaysAgo(isoDate)})` : "—";
 }
 
 function Row({
@@ -65,12 +62,12 @@ export const statusCommand: Command = {
           />
           <Row
             label="last incident"
-            value={data.lastIncident ?? "—"}
+            value={dated(data.lastIncident)}
             dim={!data.lastIncident}
           />
           <Row
             label="restore test"
-            value={data.lastRestoreTest ?? "—"}
+            value={dated(data.lastRestoreTest)}
             dim={!data.lastRestoreTest}
           />
         </div>

@@ -1,5 +1,6 @@
 import type { Command } from "./types";
 import { fetchStatusClient } from "@/lib/status-client";
+import { formatAge } from "@/lib/format";
 
 export const uptimeCommand: Command = {
   name: "uptime",
@@ -24,7 +25,7 @@ export const uptimeCommand: Command = {
         <p className="text-fg">
           {data.uptimeDays.toFixed(1)} days
           {stale && (
-            <span className="text-fg-muted"> (last seen {data.updatedAt.slice(0, 10)})</span>
+            <span className="text-fg-muted"> (last seen {formatAge(data.updatedAt)})</span>
           )}
         </p>
       ),

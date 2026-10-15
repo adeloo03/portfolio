@@ -1,11 +1,20 @@
 import { ImageResponse } from "next/og";
 import { about } from "@/content/about";
+import { fetchStatus } from "@/lib/status";
 
 export const alt = "Abel Deloo — I build things that keep running.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OgImage() {
+export default async function OgImage() {
+  // A link shared in a DM shows live evidence before anyone clicks.
+  // Stale or missing data is left out rather than shown as current.
+  const status = await fetchStatus();
+  const live =
+    status.ok && !status.stale
+      ? `home server: ${status.data.uptimeDays.toFixed(1)} days uptime · ${status.data.servicesUp}/${status.data.servicesTotal} services up`
+      : null;
+
   return new ImageResponse(
     (
       <div
@@ -31,6 +40,11 @@ export default function OgImage() {
         <div style={{ color: "#a1a1aa", fontSize: 24, lineHeight: 1.5 }}>
           {`Third-year CS · Leiden University · ${about.availability.label}`}
         </div>
+        {live && (
+          <div style={{ color: "#f59e0b", fontSize: 22, marginTop: 40 }}>
+            {live}
+          </div>
+        )}
       </div>
     ),
     { ...size }

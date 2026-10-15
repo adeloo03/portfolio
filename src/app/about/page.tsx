@@ -4,6 +4,7 @@ import { timeline } from "@/content/timeline";
 
 export const metadata: Metadata = {
   title: "About",
+  alternates: { canonical: "/about" },
   description: `Third-year Computer Science student at Leiden University. ${about.availability.sentence}`,
   openGraph: {
     title: "About — Abel Deloo",

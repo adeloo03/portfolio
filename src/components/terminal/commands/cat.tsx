@@ -81,6 +81,24 @@ export const catCommand: Command = {
       };
     }
 
+    if (path === "/var/log/incidents.log") {
+      return {
+        output: (
+          <div className="py-1 space-y-2">
+            <pre className="text-fg-muted whitespace-pre-wrap text-xs leading-relaxed">
+              {node.content}
+            </pre>
+            {/* Plain <a> on purpose: Terminal intercepts the click and opens the
+                page in UI mode. <Link> would navigate under the shell. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href="/work/homelab#incidents" className="text-accent hover:underline block">
+              → Incident log: /work/homelab#incidents
+            </a>
+          </div>
+        ),
+      };
+    }
+
     const projectMatch = path.match(/^\/projects\/([^/]+)\.md$/);
     if (projectMatch) {
       const slug = projectMatch[1];

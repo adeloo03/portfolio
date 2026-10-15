@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { projects } from "@/content/projects";
+import { incidents } from "@/content/incidents";
+import { IncidentLog } from "@/components/ui/IncidentLog";
+import { PushDiagram } from "@/components/ui/PushDiagram";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -18,6 +21,7 @@ export async function generateMetadata({
   return {
     title: project.title,
     description: project.tagline,
+    alternates: { canonical: `/work/${project.slug}` },
   };
 }
 
@@ -57,6 +61,7 @@ export default async function WorkPage({
 
       {/* Body */}
       <article className="max-w-[70ch]">
+        {slug === "status-publisher" && <PushDiagram />}
         {project.body.map((section) => (
           <section key={section.heading} className="mb-10">
             <h2 className="text-h2 font-semibold text-fg mb-4">
@@ -69,6 +74,9 @@ export default async function WorkPage({
             ))}
           </section>
         ))}
+        {slug === "homelab" && incidents.length > 0 && (
+          <IncidentLog incidents={incidents} />
+        )}
       </article>
 
       {/* Stack */}

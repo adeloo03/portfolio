@@ -33,7 +33,8 @@ export const metadata: Metadata = {
     description: `CS student at Leiden University. Self-hosted homelab, real uptime numbers. ${about.availability.label}.`,
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: BASE },
+  // canonical is set per page: a layout-level value would mark every page
+  // as a duplicate of the homepage.
 };
 
 const jsonLd = {

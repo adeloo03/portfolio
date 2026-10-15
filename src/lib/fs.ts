@@ -1,5 +1,6 @@
 import { projects } from "@/content/projects";
 import { about } from "@/content/about";
+import { incidents } from "@/content/incidents";
 
 export type FsNode =
   | { kind: "dir"; name: string; children: FsNode[] }
@@ -31,6 +32,19 @@ function aboutToMarkdown(): string {
   ].join("\n");
 }
 
+export function incidentsToLog(): string {
+  return incidents
+    .map((i) =>
+      [
+        `${i.date}${i.approximate ? " (approx.)" : ""}  ${i.title}`,
+        `  impact  ${i.impact}`,
+        `  cause   ${i.cause}`,
+        `  fix     ${i.fix}`,
+      ].join("\n")
+    )
+    .join("\n\n");
+}
+
 // Virtual filesystem derived from content. Never maintained separately.
 export const virtualFs: FsNode = {
   kind: "dir",
@@ -54,6 +68,19 @@ export const virtualFs: FsNode = {
       kind: "file",
       name: "cv.pdf",
       content: "[binary]",
+    },
+    {
+      kind: "dir",
+      name: "var",
+      children: [
+        {
+          kind: "dir",
+          name: "log",
+          children: [
+            { kind: "file", name: "incidents.log", content: incidentsToLog() },
+          ],
+        },
+      ],
     },
   ],
 };

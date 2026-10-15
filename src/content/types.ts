@@ -46,3 +46,12 @@ export type Status = {
   lastIncident: string | null;
   lastRestoreTest: string | null;
 };
+
+export type Incident = {
+  date: string; // ISO date, or only the year when approximate
+  approximate?: true;
+  title: string;
+  impact: string;
+  cause: string;
+  fix: string;
+};

@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { projects } from "@/content/projects";
 import { about } from "@/content/about";
 import { StatusStrip, StatusStripSkeleton } from "@/components/ui/StatusStrip";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   return (

@@ -155,6 +155,27 @@ export function Terminal({ onSwitchToGui }: TerminalProps) {
 
   function handleContainerClick(e: React.MouseEvent) {
     const target = e.target as HTMLElement;
+
+    // A link in the output to one of our pages: show that page instead of a
+    // full reload that could land back in the shell. Modified clicks (new
+    // tab, etc.) keep their normal browser behaviour.
+    const link = target.closest("a");
+    const href = link?.getAttribute("href");
+    const plainClick =
+      e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+    if (
+      link &&
+      href?.startsWith("/") &&
+      !/\.\w+$/.test(href.split("#")[0]) &&
+      !link.target &&
+      plainClick &&
+      onSwitchToGui
+    ) {
+      e.preventDefault();
+      onSwitchToGui(href);
+      return;
+    }
+
     if (!target.closest("a, button, input, select, textarea, [tabindex]")) {
       inputRef.current?.focus();
     }
