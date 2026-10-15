@@ -58,7 +58,7 @@ alongside everything else on the server:
 
 ```bash
 cd ~/portfolio/homelab
-cp .env.example .env          # fill in GITHUB_TOKEN and GITHUB_GIST_ID
+cp .env.example .env          # fill in GITHUB_TOKEN, GITHUB_GIST_ID, DOCKER_GID
 docker compose up -d --build docker-proxy status-publisher
 docker compose logs -f status-publisher
 ```
@@ -93,9 +93,10 @@ are published as `null`.
 - The publisher never sees the Docker socket. A `:ro` mount would not help:
   it stops the socket file being changed, not API calls through it, and full
   Docker API access is root on the host. Instead it talks to
-  [docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy),
-  which allows `GET /containers` and nothing else, on an internal network
-  with no internet access.
+  [socket-proxy](https://github.com/wollomatic/socket-proxy), which allows
+  exactly `GET /containers/json`, only from this container, on an internal
+  network with no internet access. Not `/containers/{id}/json`: that returns
+  other containers' environment variables, which hold their secrets.
 - `/proc/uptime` is mounted read-only for host uptime. The container cannot
   write to `/proc`.
 - The container runs as a non-root user (`appuser`).

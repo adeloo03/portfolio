@@ -9,14 +9,26 @@ name: homelab
 services:
   # status-publisher needs one thing from Docker: the container list. Mounting
   # the socket into it — even with :ro — would give it the full Docker API,
-  # which is root on the host. This proxy lets only GET /containers through,
-  # on a network with no route to the internet.
+  # which is root on the host. This proxy allows exactly one request,
+  # GET /containers/json, from exactly one client, on a network with no route
+  # to the internet. Not /containers/{id}/json (env vars of other containers,
+  # i.e. their secrets), not logs, not archive.
   docker-proxy:
-    image: tecnativa/docker-socket-proxy:latest
+    image: wollomatic/socket-proxy:1.13.1
     restart: unless-stopped
-    environment:
-      CONTAINERS: 1   # allow GET /containers/*
-      POST: 0         # no create, start, stop, exec, ...
+    user: "65534:${DOCKER_GID:?set DOCKER_GID in .env}"
+    mem_limit: 64M
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges
+    command:
+      - '-loglevel=info'
+      - '-listenip=0.0.0.0'
+      - '-allowfrom=status-publisher'
+      # Anchored automatically (^...$); matched against the path only.
+      - '-allowGET=(/v1\.[0-9]+)?/containers/json'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
