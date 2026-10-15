@@ -4,12 +4,10 @@ import { timeline } from "@/content/timeline";
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "Third-year Computer Science student at Leiden University, available for a six-month graduation internship from September 2026.",
+  description: `Third-year Computer Science student at Leiden University. ${about.availability.sentence}`,
   openGraph: {
     title: "About — Abel Deloo",
-    description:
-      "CS at Leiden. Self-hosted homelab. Available for graduation internship September 2026.",
+    description: `CS at Leiden. Self-hosted homelab. ${about.availability.sentence}`,
   },
 };
 
@@ -21,7 +19,7 @@ export default function AboutPage() {
           About
         </h1>
         <p className="text-sm font-mono text-accent">
-          Available · September 2026 · Leiden
+          {about.availability.label} · Leiden
         </p>
       </header>
 
@@ -115,8 +113,7 @@ export default function AboutPage() {
           Contact
         </h2>
         <p className="text-sm text-fg-muted mb-6 max-w-[70ch]">
-          Available for a six-month graduation internship from September 2026.
-          Based in Leiden.
+          {about.availability.sentence} Based in Leiden.
         </p>
         <ul className="flex flex-col gap-2">
           <li>

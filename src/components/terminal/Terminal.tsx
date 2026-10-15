@@ -28,8 +28,12 @@ function commonPrefix(strings: string[]): string {
 }
 
 interface TerminalProps {
-  /** Called by the "normal view" button and the `gui` command. */
-  onSwitchToGui?: () => void;
+  /**
+   * Called by the "normal view" button and the `gui` command, and with an
+   * href when a command opens an internal page — that page should be seen,
+   * not covered by the shell.
+   */
+  onSwitchToGui?: (href?: string) => void;
 }
 
 export function Terminal({ onSwitchToGui }: TerminalProps) {
@@ -42,11 +46,13 @@ export function Terminal({ onSwitchToGui }: TerminalProps) {
       } else if (/\.\w+$/.test(href)) {
         // Static file — let the browser handle download/open rather than the client router
         window.location.href = href;
+      } else if (onSwitchToGui) {
+        onSwitchToGui(href);
       } else {
         router.push(href);
       }
     },
-    [router]
+    [router, onSwitchToGui]
   );
 
   const switchToGui = useCallback(() => {
@@ -167,7 +173,7 @@ export function Terminal({ onSwitchToGui }: TerminalProps) {
         {onSwitchToGui && (
           <button
             type="button"
-            onClick={onSwitchToGui}
+            onClick={() => onSwitchToGui()}
             className="text-xs text-fg-muted hover:text-fg transition-colors border border-border px-2 py-1 rounded"
           >
             normal view ↗

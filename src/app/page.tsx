@@ -10,7 +10,7 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="mx-auto max-w-3xl px-6 pt-24 pb-16">
         <p className="text-sm font-mono text-accent mb-4">
-          Available · September 2026 · Leiden
+          {about.availability.label} · Leiden
         </p>
         <h1 className="text-h1 font-semibold tracking-tight text-fg leading-tight mb-4">
           I build things that keep running.
@@ -79,8 +79,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-3xl px-6 py-24">
           <h2 className="text-h2 font-semibold text-fg mb-2">Contact</h2>
           <p className="text-fg-muted text-sm mb-8 max-w-md">
-            Available for a six-month graduation internship from September 2026.
-            Based in Leiden — open to on-site, hybrid, or remote at Dutch
+            {about.availability.sentence} Based in Leiden — open to on-site, hybrid, or remote at Dutch
             companies.
           </p>
           <div className="flex flex-col gap-3">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ModeController } from "@/components/ModeController";
+import { about } from "@/content/about";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,20 +18,19 @@ const geistMono = Geist_Mono({
 });
 
 const BASE = "https://abeldeloo.nl";
+const DESCRIPTION = `${about.role} at ${about.university}. ${about.availability.sentence}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: { default: "Abel Deloo", template: "%s · Abel Deloo" },
-  description:
-    "Third-year Computer Science student at Leiden University. Available for a six-month graduation internship from September 2026.",
+  description: DESCRIPTION,
   openGraph: {
     type: "website",
     locale: "en_GB",
     url: BASE,
     siteName: "Abel Deloo",
     title: "Abel Deloo — I build things that keep running.",
-    description:
-      "CS student at Leiden University. Self-hosted homelab, real uptime numbers. Available September 2026.",
+    description: `CS student at Leiden University. Self-hosted homelab, real uptime numbers. ${about.availability.label}.`,
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: BASE },
@@ -39,14 +39,13 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Abel Deloo",
+  name: about.name,
   url: BASE,
-  email: "abel.deloo@gmail.com",
+  email: about.contact.email,
   jobTitle: "Computer Science Student",
-  worksFor: { "@type": "Organization", name: "Leiden University" },
-  sameAs: ["https://github.com/abeldl", "https://linkedin.com/in/abel-deloo"],
-  description:
-    "Third-year Computer Science student at Leiden University. Available for a six-month graduation internship from September 2026.",
+  worksFor: { "@type": "Organization", name: about.university },
+  sameAs: [about.contact.github, about.contact.linkedin],
+  description: DESCRIPTION,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -96,7 +95,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 </li>
                 <li>
                   <Link
-                    href="/"
+                    href="/?view=terminal"
                     className="font-mono hover:text-accent transition-colors"
                     aria-label="Switch to terminal view"
                   >
@@ -126,7 +125,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <ul className="flex items-center gap-4">
               <li>
                 <a
-                  href="https://github.com/abeldl"
+                  href={about.contact.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-fg-muted hover:text-fg transition-colors"
@@ -136,7 +135,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </li>
               <li>
                 <a
-                  href="https://linkedin.com/in/abel-deloo"
+                  href={about.contact.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-fg-muted hover:text-fg transition-colors"
@@ -146,7 +145,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </li>
               <li>
                 <a
-                  href="mailto:abel.deloo@gmail.com"
+                  href={`mailto:${about.contact.email}`}
                   className="text-xs text-fg-muted hover:text-fg transition-colors"
                 >
                   Mail

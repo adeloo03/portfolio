@@ -29,7 +29,7 @@ export const contactCommand: Command = {
             </a>
           </div>
           <p className="text-fg-muted pt-1">
-            Available September 2026 · Leiden
+            {about.availability.label} · Leiden
           </p>
         </div>
       ),

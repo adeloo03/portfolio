@@ -40,8 +40,7 @@ export const timeline: TimelineEntry[] = [
   },
   {
     year: 2026,
-    month: 9,
     title: "Graduation internship",
-    description: "Available from September 2026 for a six-month internship.",
+    description: "Available now for a six-month graduation internship.",
   },
 ];

@@ -5,8 +5,12 @@ export const about: About = {
   role: "Third-year Computer Science student",
   university: "Leiden University",
   graduating: "2027",
+  availability: {
+    label: "Available now",
+    sentence: "Available now for a six-month graduation internship.",
+  },
   bio: [
-    "I am looking for a six-month graduation internship starting September 2026, at a company where the software has to keep working.",
+    "I am looking for a six-month graduation internship, starting as soon as possible, at a company where the software has to keep working.",
     "My background is unusual for a student: I run a self-hosted server on repurposed hardware, deploy real services to it, and fix them when they break. That is where most of what I know about operating software actually comes from.",
     "Before university I worked two years in hospitality — long shifts, high pressure, no room for mistakes that affect other people. I carry that into how I approach any system that has users.",
     "I also volunteer teaching smartphone skills to elderly people in my area. Explaining technology to someone who has never used a touchscreen teaches you more about clarity than any course.",
@@ -21,5 +25,6 @@ export const about: About = {
   contact: {
     email: "abel.deloo@gmail.com",
     github: "https://github.com/abeldl",
+    linkedin: "https://linkedin.com/in/abel-deloo",
   },
 };

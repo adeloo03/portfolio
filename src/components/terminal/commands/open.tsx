@@ -1,11 +1,12 @@
 import type { Command } from "./types";
 import { projects } from "@/content/projects";
+import { about } from "@/content/about";
 
 const aliases: Record<string, string> = {
   about: "/about",
   contact: "/#contact",
   cv: "/cv.pdf",
-  github: "https://github.com/abeldl",
+  github: about.contact.github,
 };
 
 export const openCommand: Command = {

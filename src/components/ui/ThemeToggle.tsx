@@ -1,23 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getCurrentTheme, applyTheme } from "@/lib/theme";
+import { useEffect, useSyncExternalStore } from "react";
+import { getCurrentTheme, applyTheme, subscribeTheme } from "@/lib/theme";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [mounted, setMounted] = useState(false);
+  // null on the server — the real theme is only known in the browser.
+  const theme = useSyncExternalStore(subscribeTheme, getCurrentTheme, () => null);
+  const mounted = theme !== null;
 
+  // Apply the stored or system theme to <html> once on load.
   useEffect(() => {
-    const initial = getCurrentTheme();
-    setTheme(initial);
-    applyTheme(initial);
-    setMounted(true);
+    applyTheme(getCurrentTheme());
   }, []);
 
   function toggle() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    applyTheme(next);
+    applyTheme(theme === "light" ? "dark" : "light");
   }
 
   return (

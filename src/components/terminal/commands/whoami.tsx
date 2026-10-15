@@ -13,7 +13,7 @@ export const whoamiCommand: Command = {
             {about.role} · {about.university}
           </p>
           <p className="text-fg-muted">
-            Available for a six-month graduation internship from September 2026.
+            {about.availability.sentence}
           </p>
           <p className="text-fg-muted">
             Type <span className="text-accent">help</span> to see what you can

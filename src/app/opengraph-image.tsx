@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { about } from "@/content/about";
 
 export const alt = "Abel Deloo — I build things that keep running.";
 export const size = { width: 1200, height: 630 };
@@ -28,7 +29,7 @@ export default function OgImage() {
           I build things that keep running.
         </div>
         <div style={{ color: "#a1a1aa", fontSize: 24, lineHeight: 1.5 }}>
-          Third-year CS · Leiden University · Available September 2026
+          {`Third-year CS · Leiden University · ${about.availability.label}`}
         </div>
       </div>
     ),
