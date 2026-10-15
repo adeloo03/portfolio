@@ -1,0 +1,25 @@
+# Everything that runs on the home server, in one reproducible file.
+# Secrets come from .env next to this file (see .env.example) and are never committed.
+#
+# Only status-publisher is written by hand. The other services are generated from
+# the running containers with scripts/generate-compose.sh, reviewed, stripped of
+# secrets and addresses, and pasted below.
+name: homelab
+
+services:
+  status-publisher:
+    build: ../status-publisher
+    image: status-publisher:local
+    restart: unless-stopped
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN:?set GITHUB_TOKEN in .env}
+      GITHUB_GIST_ID: ${GITHUB_GIST_ID:?set GITHUB_GIST_ID in .env}
+    group_add:
+      - "${DOCKER_GID:-999}"
+    volumes:
+      - /proc/uptime:/proc/uptime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # lastIncident / lastRestoreTest, written by scripts/set-state.sh
+      - ./state:/state:ro
+
+  # ── Generated services go here ────────────────────────────────────

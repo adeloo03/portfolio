@@ -1,0 +1,35 @@
+# Copy to backup.conf (git-ignored) and fill in from discover.sh output.
+# shellcheck shell=bash
+
+# Host paths to back up: the "Source" side of each mount of Pi-hole and WireGuard.
+# Also this repo's .env and this file: a rebuild needs them most, and the
+# backup is encrypted.
+BACKUP_PATHS=(
+  /path/to/pihole/etc-pihole
+  /path/to/pihole/etc-dnsmasq.d
+  /path/to/wireguard/config
+  /home/you/portfolio/homelab/.env
+  /home/you/portfolio/homelab/scripts/backup.conf
+)
+
+# The PC's age public key (age-keygen prints "Public key: age1...").
+# Only the public key lives on the server: it can write backups, not read them.
+AGE_RECIPIENT="age1replace-me"
+
+BACKUP_DIR=/srv/homelab/backups
+KEEP=14
+# Your login user on the server. backup.sh runs as root; without this the PC
+# (which pulls as you) cannot read the files.
+BACKUP_OWNER=you
+
+# ── restore-test.sh ───────────────────────────────────────────────
+# Which of the BACKUP_PATHS is Pi-hole's /etc/pihole, and its /etc/dnsmasq.d (optional).
+PIHOLE_ETC_PATH=/path/to/pihole/etc-pihole
+PIHOLE_DNSMASQ_PATH=/path/to/pihole/etc-dnsmasq.d
+# Name of the production Pi-hole container — the test uses the same image.
+PIHOLE_CONTAINER=pihole
+# The WireGuard config file inside the backup (checked for keys, never printed).
+WG_CONFIG_FILE=/path/to/wireguard/config/wg_confs/wg0.conf
+# A domain on your blocklists, and one that must resolve.
+BLOCKED_TEST_DOMAIN=doubleclick.net
+ALLOWED_TEST_DOMAIN=example.com

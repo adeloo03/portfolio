@@ -43,3 +43,9 @@ next-env.d.ts
 .vercel
 .env*
 !.env.example
+
+# homelab: local config and anything that may contain secrets or paths
+homelab/scripts/backup.conf
+homelab/compose.generated.yaml
+homelab/state/
+homelab/pc/settings.psd1
