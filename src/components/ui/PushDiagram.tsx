@@ -31,8 +31,8 @@ export function PushDiagram() {
         ))}
       </div>
       <figcaption className="mt-3 text-sm text-fg-muted">
-        Data flows one way: out of the home network, never in. Connections
-        into the home network: <span className="text-fg font-mono">none</span>.
+        Data flows one way: out of the server, never in. Connections the
+        publisher accepts: <span className="text-fg font-mono">none</span>.
       </figcaption>
     </figure>
   );

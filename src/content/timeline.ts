@@ -33,10 +33,16 @@ export const timeline: TimelineEntry[] = [
       "Teaching elderly residents how to use smartphones and tablets. Ongoing.",
   },
   {
-    year: 2025,
+    year: 2026,
+    title: "Home lab rebuilt on Proxmox",
+    description:
+      "Moved from the laptop to a mini PC running Proxmox: one Compose stack per concern in git, nightly snapshot backups with Proxmox Backup Server, Prometheus and Grafana for monitoring.",
+  },
+  {
+    year: 2026,
     title: "Status publisher",
     description:
-      "Built a C# service that pushes a sanitized snapshot of the home server to this portfolio every 15 minutes. No open ports into the home network.",
+      "A C# service that pushes a sanitized snapshot of the home server to this portfolio every 15 minutes. It accepts no connections, and its Docker access is limited to one read-only API call.",
   },
   {
     year: 2026,

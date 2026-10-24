@@ -6,33 +6,49 @@ export const projects: Project[] = [
     slug: "homelab",
     title: "Home Lab",
     tagline:
-      "A 2013 Packard Bell laptop, repurposed into a server running four services for real daily use.",
-    stack: ["Docker", "Linux", "Pi-hole", "WireGuard", "Glances"],
-    links: [],
+      "A Proxmox host running over a dozen self-hosted services: configuration in git, nightly snapshot backups, monitoring on everything.",
+    stack: [
+      "Proxmox VE",
+      "Proxmox Backup Server",
+      "Docker Compose",
+      "Prometheus",
+      "Grafana",
+      "WireGuard",
+    ],
+    links: [
+      {
+        label: "Restore runbook",
+        href: "https://github.com/adeloo03/portfolio/blob/main/homelab/RUNBOOK.md",
+      },
+    ],
     body: [
       {
-        heading: "What runs and why",
+        heading: "Where it started",
         paragraphs: [
-          "The hardware was not chosen — it was available: AMD E1-2500, 4 GB RAM, 320 GB HDD. That constraint shaped every decision.",
-          "Pi-hole acts as the network-wide DNS resolver. The router points to it, so every device on the network benefits. Ad and tracking requests are dropped before they leave the house.",
-          "WireGuard runs as a VPN back into the home network, on host networking so it has direct access to the router. Used from outside when I need to reach local services.",
-          "Glances gives me system monitoring from any terminal. No web dashboard, no persistent login — one command and I see what the machine is doing.",
-          "TerraceTime, a web app built during my entrepreneurship minor at TU Delft, is deployed here rather than left running on a dev machine.",
-          "All containers use --restart unless-stopped. After a power cut, the machine boots and Docker restores them without intervention.",
+          "A 2013 Packard Bell laptop with an AMD E1-2500 and 4 GB of RAM, running four containers started with docker run. It worked, and it taught me what happens when a service goes down at an inconvenient time — see the incident log below.",
+          "It also had a problem I could not see while it was running: everything lived in my head. Had the disk died, I would have been rebuilding from memory.",
         ],
       },
       {
-        heading: "What broke and what I did about it",
+        heading: "What it is now",
         paragraphs: [
-          "The server started on WiFi. Services dropped unpredictably, and the physical position of the machine in the house made it worse. I spent time adjusting Docker configuration before accepting that no software fix closes an unreliable radio link. I ran an Ethernet cable. The problem stopped.",
-          "Some failures are not debugging problems.",
+          "A mini PC running Proxmox VE. One VM runs every container; Jellyfin runs separately in an LXC container with hardware transcoding.",
+          "The containers are grouped into one Docker Compose stack per concern: reverse proxy, VPN, monitoring, a shared platform layer (Postgres, notifications, uptime checks) and the services themselves — Nextcloud, Vaultwarden, Gitea. All of it is in a git repository on that same Gitea. Secrets live in .env files that git ignores.",
+          "Monitoring is Prometheus with node-exporter and cAdvisor, dashboards in Grafana, and Uptime Kuma for whether each service actually answers.",
         ],
       },
       {
-        heading: "What I would do differently",
+        heading: "Backups",
         paragraphs: [
-          "I start containers with docker run commands, which works until the disk dies and I am rebuilding from memory. The correct approach is Docker Compose files in a private repository — reproducible, version-controlled, recoverable.",
-          "I would also run automated backups of Pi-hole's configuration and the WireGuard keys, and periodically test that they actually restore. A backup no one has tested is not a backup.",
+          "Proxmox Backup Server runs as its own VM with a dedicated SSD. Every night it takes a snapshot of the Docker VM. Retention keeps the last 3, then 7 daily, 4 weekly and 3 monthly; pruning and garbage collection run on a schedule. How to rebuild the backup server itself is written down.",
+        ],
+      },
+      {
+        heading: "What is not done yet",
+        paragraphs: [
+          "No restore has been tested. Until one has, the backups are a hypothesis. The procedure is written: restore the newest snapshot as a new VM with its network link cut — it is a byte-for-byte copy, and on the LAN it would clash with the real machine — check every container and database from the console, then destroy it. The date of the last successful test is shown in the status bar on this site.",
+          "The backups sit on the same physical machine as what they protect. A separate SSD survives a broken VM, not a broken or stolen mini PC. An off-site copy is the next step.",
+          "About ten containers run on :latest image tags. That makes every restart a possible upgrade nobody chose. Pinning versions and updating deliberately is on the list.",
         ],
       },
     ],
@@ -42,7 +58,7 @@ export const projects: Project[] = [
     title: "Status Publisher",
     tagline:
       "A C# service that tells this site whether the home server is up — without opening a single inbound port.",
-    stack: ["C#", ".NET 9", "Docker", "GitHub Gist API"],
+    stack: ["C#", ".NET 9", "Docker", "socket-proxy", "GitHub Gist API"],
     links: [
       {
         label: "Source code",
@@ -59,8 +75,8 @@ export const projects: Project[] = [
       {
         heading: "The design",
         paragraphs: [
-          "The publisher runs as a Docker container on the server. Every 15 minutes it reads two things locally: host uptime from /proc/uptime and container counts from the Docker socket. It then makes one outbound HTTPS call to the GitHub Gist API and overwrites a single JSON file.",
-          "The portfolio fetches that file. The connection goes in one direction only: server → GitHub → site. The home network never receives an inbound connection from anything.",
+          "The publisher runs as a Docker container on the server. Every 15 minutes it reads two things locally: uptime from /proc/uptime and container counts from Docker. It then makes one outbound HTTPS call to the GitHub Gist API and overwrites a single JSON file.",
+          "The portfolio fetches that file. The data goes in one direction only: server → GitHub → site. The publisher never accepts a connection; it only makes them.",
         ],
       },
       {
@@ -71,11 +87,18 @@ export const projects: Project[] = [
         ],
       },
       {
+        heading: "Docker access without the keys to the server",
+        paragraphs: [
+          "Counting containers needs the Docker API. The usual shortcut is mounting the Docker socket read-only. That :ro protects the socket file, not what you can do through it: any process holding the socket can start a privileged container, which is root on the host.",
+          "So the publisher never sees the socket. It talks to a small proxy on an internal network with no route to the internet. The proxy allows exactly one request — GET /containers/json — and only from the publisher. I tested that list instead of trusting it: the container list returns 200; inspecting a container (which would expose other services' environment variables, and with them their passwords), reading logs, listing images and creating containers all return 403 or 405, and so does the allowed request from any other container.",
+        ],
+      },
+      {
         heading: "Why push, not pull",
         paragraphs: [
-          "A pull-based design requires the server to accept inbound connections. That means a public IP or dynamic DNS pointing at the home router, a port-forwarding rule exposing a service to the internet, and that service kept patched and authenticated indefinitely. Each of those is a failure mode.",
-          "Push removes the exposure entirely. The server initiates outbound HTTPS to a known host (GitHub). Outbound HTTPS on port 443 is traffic the router already allows for software updates and everything else. No new rules, no new exposure.",
-          "If the publisher crashes or the server goes offline, the portfolio displays the last known snapshot with a 'last updated' timestamp. A stale widget, not a broken one — and not an open socket.",
+          "The server already serves a few things to the internet through a reverse proxy with TLS — each one a deliberate choice, kept patched and behind authentication. A status endpoint would be one more of those, for data that does not need it.",
+          "Push adds nothing to that surface. The publisher makes one outbound HTTPS call to a known host and accepts no connections at all.",
+          "If the publisher crashes or the server goes offline, the portfolio displays the last known snapshot with a 'last updated' timestamp. A stale widget, not a broken one.",
         ],
       },
       {
