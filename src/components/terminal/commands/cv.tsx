@@ -3,7 +3,7 @@ import { about } from "@/content/about";
 
 export const cvCommand: Command = {
   name: "cv",
-  description: "Open the CV (PDF)",
+  description: "Open the CV",
   run(_args, ctx) {
     ctx.navigate(about.cv);
     return {

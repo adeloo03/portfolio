@@ -5,14 +5,13 @@ export const about: About = {
   role: "Fourth-year Computer Science student",
   university: "Leiden University",
   graduating: "2027",
-  cv: "/Abel_Deloo_CV.pdf",
+  cv: "/cv.html",
   availability: {
-    label: "Available Q4 2026 or Q1 2027",
-    sentence:
-      "Available for a six-month graduation internship, start date flexible: Q4 2026 or Q1 2027.",
+    label: "Available from February 2027",
+    sentence: "Available for a six-month graduation internship from February 2027.",
   },
   bio: [
-    "I am looking for a six-month graduation internship at a company where the software has to keep working. Start date is flexible: Q4 2026 or Q1 2027. In September 2027 I start the MSc Data Science and Artificial Intelligence Technology.",
+    "I am looking for a six-month graduation internship at a company where the software has to keep working. I am available from February 2027. In September 2027 I start the MSc Data Science and Artificial Intelligence Technology.",
     "Most recently I worked in a team of six on a model for Naturalis Biodiversity Center that identifies insect species from raw field recordings, delivered in a format their platform reads directly.",
     "My background is unusual for a student: I run a Proxmox home server with over a dozen self-hosted services that my household and I rely on, and I fix them when they break. That is where most of what I know about operating software actually comes from.",
     "At TU Delft I completed a minor in Technology-based Entrepreneurship with an average grade of 8. Our team built TerraceTime, a real-time seat availability app, and validated it through 26 interviews and user tests. The lesson I kept: find out what people need before building it.",

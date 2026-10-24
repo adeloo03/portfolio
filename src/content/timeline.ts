@@ -58,6 +58,6 @@ export const timeline: TimelineEntry[] = [
     year: 2026,
     title: "Graduation internship",
     description:
-      "Available for six months, start date flexible: Q4 2026 or Q1 2027. MSc Data Science and AI Technology from September 2027.",
+      "Available for six months from February 2027. MSc Data Science and AI Technology from September 2027.",
   },
 ];

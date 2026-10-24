@@ -1,7 +1,7 @@
 # Portfolio — Abel Deloo
 
 Portfolio for a fourth-year Computer Science student at Leiden University, applying for a
-six-month graduation (thesis) internship, start date flexible (Q4 2026 or Q1 2027). Facts
+six-month graduation (thesis) internship from February 2027. Facts
 (dates, roles) follow the CV; availability and role live in `src/content/about.ts` only.
 Target audience: technical
 recruiters and engineering leads at Dutch high-tech companies (ASML, Nedap, Thermo Fisher,

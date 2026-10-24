@@ -36,8 +36,7 @@ export default function HomePage() {
             href={about.cv}
             className="inline-flex items-center px-5 py-2.5 rounded border border-border text-fg text-sm font-medium hover:border-fg-muted transition-colors"
           >
-            Download CV
-            <span className="sr-only"> (PDF)</span>
+            View CV
           </a>
         </div>
       </section>

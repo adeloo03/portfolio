@@ -67,7 +67,7 @@ export const virtualFs: FsNode = {
     {
       kind: "file",
       name: about.cv.replace(/^\//, ""),
-      content: "[binary]",
+      content: "",
     },
     {
       kind: "dir",

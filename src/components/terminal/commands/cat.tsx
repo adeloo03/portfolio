@@ -40,9 +40,9 @@ export const catCommand: Command = {
       return {
         output: (
           <div className="py-1 space-y-1">
-            <p className="text-fg-muted">[binary file]</p>
+            <p className="text-fg-muted">CV, as a web page.</p>
             <a href={about.cv} className="text-accent hover:underline">
-              → Download: {about.cv}
+              → Open: {about.cv}
             </a>
           </div>
         ),
