@@ -128,8 +128,11 @@ Order on the site is deliberate. Do not reorder without discussion:
 2. **Homelab** — Proxmox, Compose stacks in git, PBS backups. The strongest infrastructure
    evidence and the least common.
 3. **Status publisher** — the small service that feeds this site. Proof of end-to-end work.
-4. **Messaging web app** — second-year university project, Python + SQL. Framed honestly
-   as coursework, with a retrospective on what would be done differently now.
+4. **Messaging web app** — second-year university project, Python + SQL. The project that
+   made Python his main language.
+
+Project copy comes from Abel's own descriptions: keep facts exactly as written, no added
+numbers, results or technologies, first person, no em dashes.
 
 ## Quality bar
 
