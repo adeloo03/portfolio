@@ -56,6 +56,14 @@ export const projects: Project[] = [
           "This is where most of my Linux, networking and container knowledge comes from, and where I find out what actually breaks once something has to keep running without anyone watching it.",
         ],
       },
+      {
+        heading: "Backups and monitoring",
+        paragraphs: [
+          "Proxmox Backup Server runs as its own VM on a separate SSD and takes a snapshot of the Docker VM every night. Retention keeps the last 3, plus 7 daily, 4 weekly and 3 monthly backups, and pruning and garbage collection run on a schedule.",
+          "For monitoring I run Prometheus with node-exporter and cAdvisor, dashboards in Grafana, and Uptime Kuma to check that each service actually answers.",
+          "I have not tested a full restore yet. Until I have, the backups are a promise rather than proof, so that is next. The status bar on this site shows the date of the last restore test once there is one.",
+        ],
+      },
     ],
   },
   {
