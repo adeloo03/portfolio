@@ -46,7 +46,7 @@ export const projects: Project[] = [
     links: [
       {
         label: "Source code",
-        href: "https://github.com/abeldl/portfolio/tree/main/status-publisher",
+        href: "https://github.com/adeloo03/portfolio/tree/main/status-publisher",
       },
     ],
     body: [

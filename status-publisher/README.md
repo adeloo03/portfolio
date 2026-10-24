@@ -53,15 +53,9 @@ nothing else. If it leaks, the blast radius is your gists.
 
 ### 3. Configure and run
 
-The publisher runs from [`homelab/compose.yaml`](../homelab/compose.yaml),
-alongside everything else on the server:
-
-```bash
-cd ~/portfolio/homelab
-cp .env.example .env          # fill in GITHUB_TOKEN, GITHUB_GIST_ID, DOCKER_GID
-docker compose up -d --build docker-proxy status-publisher
-docker compose logs -f status-publisher
-```
+The publisher runs as its own Compose stack next to the other stacks on the
+server; see [`homelab/status/docker-compose.yml`](../homelab/status/docker-compose.yml)
+and the deploy steps in [`homelab/README.md`](../homelab/README.md).
 
 The container publishes immediately on start, then every 15 minutes.
 
@@ -79,14 +73,14 @@ stale or unreachable.
 ## Updating incident dates
 
 ```bash
-homelab/scripts/set-state.sh lastIncident 2026-10-16
-homelab/scripts/set-state.sh lastRestoreTest today    # restore-test.sh does this itself
+/opt/homelab/docker-compose/status/set-state.sh lastIncident 2026-10-16
+/opt/homelab/docker-compose/status/set-state.sh lastRestoreTest today
 ```
 
-This writes `homelab/state/status-state.json`, mounted read-only at `/state`.
-The publisher reads it on every run; no restart needed. Without that file it
-falls back to the `LAST_INCIDENT` / `LAST_RESTORE_TEST` env vars. Empty values
-are published as `null`.
+This writes `/opt/homelab/data/status-publisher/status-state.json`, mounted
+read-only at `/state`. The publisher reads it on every run; no restart needed.
+Without that file it falls back to the `LAST_INCIDENT` / `LAST_RESTORE_TEST`
+env vars. Empty values are published as `null`.
 
 ## Security notes
 

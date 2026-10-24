@@ -1,51 +1,52 @@
-# Runbook: the server is gone
+# Runbook: restore test
 
-For when the disk dies, the laptop is stolen, or an update leaves it unbootable.
-Goal: every service back, with its configuration, without remembering anything.
+A backup counts once it has been restored. This is the procedure for proving
+that the nightly Proxmox Backup Server snapshot of `docker01` (the VM that runs
+every container) actually comes back as a working machine.
 
-**Last full drill:** not yet performed.
-**Measured recovery time:** not yet measured.
+**Last restore test:** not yet performed.
+**Measured time, restore start → all containers healthy:** not yet measured.
 
-Both lines are filled in after a real drill, never estimated.
+Both lines are filled in after a real test, never estimated.
 
-## You need
+## Why the restored VM never touches the network
 
-- The PC, with the age private key and `C:\Backups\homelab` (or the offline key copy)
-- A machine that boots Linux, on Ethernet (not WiFi — see the incident log)
-- Access to the router admin page (DNS settings)
-
-## While it is down
-
-The network has no DNS while Pi-hole is gone. Set the router's DNS back to the
-ISP default first, so the household is not offline while you rebuild.
+The restore is a byte-for-byte copy of `docker01`: same static IP, same
+containers, same `restart: unless-stopped`. Booted on the LAN it would clash
+with the real VM's IP, update public DNS records, and start a second copy of
+every job that talks to the outside world. So the network link is disabled
+before the first boot, and everything is checked from the Proxmox console.
 
 ## Steps
 
-1. **Install the OS** (Debian/Ubuntu server), Docker, git, age and dnsutils.
-   Add your user to the `docker` group.
-2. **Get the repo:** `git clone` the portfolio repo to `~/portfolio`.
-3. **Restore the configs.** On the PC, decrypt and send the newest backup:
-
-   ```powershell
-   cmd /c "age -d -i KEY C:\Backups\homelab\NEWEST.tar.gz.age | ssh SERVER ""umask 077; cat > /tmp/restore.tar.gz"""
-   ```
-
-   Then on the server:
+1. **Pick the backup.** Proxmox → Datacenter → storage `backups` → newest
+   `docker01` snapshot. Note its timestamp. **Start the clock.**
+2. **Restore to a new VM ID** (e.g. 900), on local-lvm, with
+   *Unique* checked (new MAC address) and *Start after restore* **unchecked**.
+3. **Cut the network before booting:** VM 900 → Hardware → Network Device →
+   Edit → tick *Disconnect*. Or on the host: `qm set 900 --net0 <same model and bridge>,link_down=1`.
+4. **Boot and log in on the console** (VM 900 → Console).
+5. **Check:**
+   - `docker ps --format '{{.Names}} {{.Status}}'` — every container is `Up`,
+     and the ones with healthchecks say `(healthy)`. Give it a few minutes.
+   - Databases accept connections:
+     `for c in $(docker ps --format '{{.Names}}' | grep -E 'db$|^postgres$'); do docker exec "$c" pg_isready; done`
+   - Data is recent: the newest file under `/opt/homelab/data/nextcloud/data`
+     and the Vaultwarden database are from the snapshot's date, not older.
+   - `git -C /opt/homelab status` is clean and the log matches the real VM.
+6. **Stop the clock** when all checks pass. Write down the time.
+7. **Destroy VM 900** (Shutdown, then More → Remove, with *Purge* and
+   *Destroy unreferenced disks*).
+8. **Record it** on the real `docker01`:
 
    ```bash
-   sudo tar -xzPf /tmp/restore.tar.gz && shred -u /tmp/restore.tar.gz
+   /opt/homelab/docker-compose/status/set-state.sh lastRestoreTest today
    ```
 
-   `-P` puts every file back at the absolute path it was backed up from,
-   including `homelab/.env` and `scripts/backup.conf`.
-4. **Check secrets:** `homelab/.env` came back in step 3. If the GitHub token
-   may have left with the old machine, revoke it and make a new one.
-5. **Start everything:** `cd ~/portfolio/homelab && docker compose up -d`
-6. **Check:** `docker compose ps` shows everything running;
-   `dig @127.0.0.1 example.com` answers; `dig @127.0.0.1 doubleclick.net`
-   returns `0.0.0.0`; a phone on mobile data connects over WireGuard.
-7. **Point the router's DNS back** at the server.
-8. **Backups again:** add the root cron line from `scripts/backup.sh` and run
-   `sudo scripts/backup.sh` once. Confirm the PC pulls it.
-9. **Record it:** add an entry to the incident log, and run
-   `scripts/set-state.sh lastIncident today`.
+   The status publisher picks it up within 15 minutes; the site shows
+   "restore tested today". Fill in the two lines at the top of this file.
+
+## If a check fails
+
+That is the point of testing. Note what failed, fix the cause on the real
+VM (or the backup job), add an entry to the incident log, and test again.

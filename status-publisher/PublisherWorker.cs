@@ -14,7 +14,7 @@ public sealed class PublisherWorker(
 {
     private static readonly TimeSpan PublishInterval = TimeSpan.FromMinutes(15);
 
-    // Written by homelab/scripts/set-state.sh. Read on every publish, so a
+    // Written by homelab/status/set-state.sh. Read on every publish, so a
     // restore test shows up on the site without restarting this container.
     private const string StatePath = "/state/status-state.json";
 
@@ -119,7 +119,7 @@ public sealed class PublisherWorker(
 
     private static async Task<(int up, int total)> ReadContainerCounts(CancellationToken ct)
     {
-        // DOCKER_HOST points at the read-only socket proxy (homelab/compose.yaml).
+        // DOCKER_HOST points at the socket proxy (homelab/status/docker-compose.yml).
         var dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST")
             ?? "unix:///var/run/docker.sock";
         using var client = new DockerClientConfiguration(new Uri(dockerHost)).CreateClient();

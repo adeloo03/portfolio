@@ -8,7 +8,7 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-state="${STATE_FILE:-$here/../state/status-state.json}"
+state="${STATE_FILE:-/opt/homelab/data/status-publisher/status-state.json}"
 
 usage() { echo "usage: $0 <lastIncident|lastRestoreTest> <YYYY-MM-DD|today|null>" >&2; exit 2; }
 [[ $# -eq 2 ]] || usage

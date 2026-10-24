@@ -24,7 +24,7 @@ export const about: About = {
   },
   contact: {
     email: "abel.deloo@gmail.com",
-    github: "https://github.com/abeldl",
+    github: "https://github.com/adeloo03",
     linkedin: "https://linkedin.com/in/abel-deloo",
   },
 };

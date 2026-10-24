@@ -1,72 +1,43 @@
 # homelab
 
-Configuration and operations for the home server: a 2013 Packard Bell laptop
-(AMD E1-2500, 4 GB RAM, 320 GB HDD) running Pi-hole, WireGuard, Glances and
-TerraceTime in Docker, plus the [status publisher](../status-publisher) that
-feeds the portfolio.
+The public part of the home server setup. The full configuration (one Docker
+Compose stack per concern, in git) lives in a private repository on the
+server's own Gitea; this folder holds what feeds the portfolio, and how
+backups are proven.
 
-Everything here is sanitised: no IP addresses, hostnames, keys or passwords.
-Those live in git-ignored files on the machines that need them.
-
-## How the pieces connect
+## The setup
 
 ```
- home server                                    PC (Windows)
- ┌──────────────────────────────┐               ┌──────────────────────┐
- │ containers (compose.yaml)    │               │ age private key      │
- │ status-publisher ──HTTPS──────────► GitHub Gist ◄── portfolio site  │
- │                              │               │                      │
- │ backup.sh (cron, 03:00)      │   ssh pull    │ pull-backups.ps1     │
- │  tar → age (public key) ─────┼──────────────►│  (daily task)        │
- │                              │               │                      │
- │ restore-test.sh ◄────────────┼── decrypted ──┤ restore-test.ps1     │
- │  throwaway Pi-hole, dig      │    stream     │                      │
- └──────────────────────────────┘               └──────────────────────┘
+ mini PC (Intel i5-7500T) — Proxmox VE
+ ├── VM docker01 ─ Docker, one Compose stack per concern:
+ │                 proxy, VPN, monitoring (Prometheus, Grafana, cAdvisor,
+ │                 node-exporter, Uptime Kuma), platform (Postgres, ntfy),
+ │                 services (Nextcloud, Vaultwarden, Gitea), status publisher
+ ├── VM pbs ────── Proxmox Backup Server, own SSD,
+ │                 nightly snapshot of docker01, pruned and garbage-collected
+ └── LXC ───────── Jellyfin, hardware transcoding (VAAPI)
 ```
 
-- **Nothing connects into the home network.** The publisher pushes out; the PC
-  pulls over the LAN.
-- **The server can write backups but not read them.** It only holds the age
-  public key. A compromised server does not leak old configs.
-- **A backup counts once it has been restored.** `restore-test.sh` starts a
-  second Pi-hole from the backup and checks it resolves and blocks. Only then
-  does `lastRestoreTest` change on the site.
+Grew out of a 2013 Packard Bell laptop running four containers started by
+hand. What changed: configuration moved into git, backups became nightly
+snapshots with retention, monitoring and alerting came in.
 
 ## Files
 
 | Path | What |
 | --- | --- |
-| `compose.yaml` | Every service, reproducible. Secrets via `.env`. |
-| `RUNBOOK.md` | Rebuilding the server from nothing. |
-| `scripts/discover.sh` | What runs now: images, mounts, ports. No secrets. |
-| `scripts/generate-compose.sh` | Turns running containers into a draft compose file. |
-| `scripts/backup.sh` | Encrypted config backup, keeps the last 14. |
-| `scripts/restore-test.sh` | Proves a backup restores. |
-| `scripts/set-state.sh` | Sets `lastIncident` / `lastRestoreTest` for the site. |
-| `pc/pull-backups.ps1` | Copies new backups to the PC. |
-| `pc/restore-test.ps1` | Runs the restore test from the PC. |
+| `status/docker-compose.yml` | The status publisher stack, as deployed. |
+| `status/set-state.sh` | Records `lastIncident` / `lastRestoreTest` for the site. |
+| `RUNBOOK.md` | Restore test: a nightly snapshot booted as a working VM. |
 
-## Setup
+## Deploying the status stack
 
-On the server (Debian/Ubuntu):
+On `docker01`:
 
 ```bash
-sudo apt install age dnsutils
-git clone https://github.com/<you>/portfolio.git ~/portfolio
-cd ~/portfolio/homelab
-cp .env.example .env                       # fill in
-cp scripts/backup.conf.example scripts/backup.conf
-scripts/discover.sh                        # fill backup.conf from this
-sudo scripts/backup.sh --dry-run
+mkdir -p /opt/homelab/docker-compose/status /opt/homelab/data/status-publisher
+cp status/docker-compose.yml status/set-state.sh /opt/homelab/docker-compose/status/
+# .env next to it: GITHUB_TOKEN (gist scope only), GITHUB_GIST_ID — never committed
+cd /opt/homelab/docker-compose/status && docker compose up -d --build
+docker compose logs -f status-publisher
 ```
-
-On the PC:
-
-```powershell
-winget install FiloSottile.age
-age-keygen -o C:\Users\you\.age\homelab-key.txt   # prints the public key for backup.conf
-Copy-Item homelab\pc\settings.example.psd1 homelab\pc\settings.psd1   # fill in
-homelab\pc\register-task.ps1
-```
-
-Then, on the server, add the root cron line from the top of `scripts/backup.sh`.

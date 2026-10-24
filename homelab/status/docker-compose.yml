@@ -1,0 +1,56 @@
+# Status publisher stack. Lives in the homelab repo at
+# docker-compose/status/docker-compose.yml; this copy is the published version.
+# Secrets in .env next to this file: GITHUB_TOKEN (gist scope only), GITHUB_GIST_ID.
+services:
+  # status-publisher needs one thing from Docker: the container list. Mounting
+  # the socket into it — even with :ro — would give it the full Docker API,
+  # which is root on the host. This proxy allows exactly one request,
+  # GET /containers/json, from exactly one client, on a network with no route
+  # to the internet. Not /containers/{id}/json (other containers' env vars,
+  # i.e. their secrets), not logs, not archive.
+  status-docker-proxy:
+    image: wollomatic/socket-proxy:1.13.1
+    container_name: status-docker-proxy
+    restart: unless-stopped
+    user: "65534:${DOCKER_GID:-983}"
+    mem_limit: 64M
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges
+    command:
+      - '-loglevel=info'
+      - '-listenip=0.0.0.0'
+      - '-allowfrom=status-publisher'
+      # Anchored automatically (^...$); matched against the path only.
+      - '-allowGET=(/v1\.[0-9]+)?/containers/json'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - status_docker_api
+
+  status-publisher:
+    build: https://github.com/adeloo03/portfolio.git#main:status-publisher
+    image: status-publisher:local
+    container_name: status-publisher
+    restart: unless-stopped
+    depends_on:
+      - status-docker-proxy
+    environment:
+      - TZ=Europe/Amsterdam
+      - GITHUB_TOKEN=${GITHUB_TOKEN:?set GITHUB_TOKEN in .env}
+      - GITHUB_GIST_ID=${GITHUB_GIST_ID:?set GITHUB_GIST_ID in .env}
+      - DOCKER_HOST=tcp://status-docker-proxy:2375
+    volumes:
+      # Host uptime. In a VM this is the VM's uptime, which is what restarts reset.
+      - /proc/uptime:/proc/uptime:ro
+      # lastIncident / lastRestoreTest, written by set-state.sh
+      - /opt/homelab/data/status-publisher:/state:ro
+    networks:
+      - status_docker_api   # to the proxy only
+      - default             # out to the GitHub API
+
+networks:
+  status_docker_api:
+    internal: true
