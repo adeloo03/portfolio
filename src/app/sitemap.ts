@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { projects } from "@/content/projects";
 
-const BASE = "https://abeldeloo.nl";
+const BASE = "https://abeldeloo.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const projectPages = projects.map((p) => ({

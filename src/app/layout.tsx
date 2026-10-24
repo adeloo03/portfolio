@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const BASE = "https://abeldeloo.nl";
+const BASE = "https://abeldeloo.dev";
 const DESCRIPTION = `${about.role} at ${about.university}. ${about.availability.sentence}`;
 
 export const metadata: Metadata = {
