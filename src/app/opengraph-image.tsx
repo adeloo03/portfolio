@@ -38,7 +38,10 @@ export default async function OgImage() {
           I build things that keep running.
         </div>
         <div style={{ color: "#a1a1aa", fontSize: 24, lineHeight: 1.5 }}>
-          {`Third-year CS · Leiden University · ${about.availability.label}`}
+          {`${about.role} · ${about.university}`}
+        </div>
+        <div style={{ color: "#a1a1aa", fontSize: 24, lineHeight: 1.5 }}>
+          {about.availability.label}
         </div>
         {live && (
           <div style={{ color: "#f59e0b", fontSize: 22, marginTop: 40 }}>

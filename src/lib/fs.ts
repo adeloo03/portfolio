@@ -66,7 +66,7 @@ export const virtualFs: FsNode = {
     },
     {
       kind: "file",
-      name: "cv.pdf",
+      name: about.cv.replace(/^\//, ""),
       content: "[binary]",
     },
     {

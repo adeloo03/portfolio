@@ -5,7 +5,7 @@ import { about } from "@/content/about";
 const aliases: Record<string, string> = {
   about: "/about",
   contact: "/#contact",
-  cv: "/cv.pdf",
+  cv: about.cv,
   github: about.contact.github,
 };
 

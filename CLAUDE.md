@@ -1,7 +1,9 @@
 # Portfolio — Abel Deloo
 
-Portfolio for a third-year Computer Science student at Leiden University, applying for a
-six-month graduation (thesis) internship starting September 2026. Target audience: technical
+Portfolio for a fourth-year Computer Science student at Leiden University, applying for a
+six-month graduation (thesis) internship, start date flexible (Q4 2026 or Q1 2027). Facts
+(dates, roles) follow the CV; availability and role live in `src/content/about.ts` only.
+Target audience: technical
 recruiters and engineering leads at Dutch high-tech companies (ASML, Nedap, Thermo Fisher,
 TomTom, Picnic and similar). They spend 6–10 seconds on first impression, often on mobile.
 
@@ -62,7 +64,7 @@ never resolves.
 - Next.js (App Router) · TypeScript · Tailwind
 - No extra dependencies without discussion. No xterm.js, no animation library, no UI kit.
   The terminal is handwritten — that is the point.
-- Deploy: Vercel
+- Deploy: Vercel, at https://abeldeloo.dev (www redirects to the apex)
 
 ## Structure
 
@@ -121,9 +123,12 @@ bare error.
 
 Order on the site is deliberate. Do not reorder without discussion:
 
-1. **Homelab** — self-hosted infrastructure. The strongest evidence and the least common.
-2. **Status publisher** — the small service that feeds this site. Proof of end-to-end work.
-3. **Messaging web app** — second-year university project, Python + SQL. Framed honestly
+1. **Insect sound classifier (Naturalis)** — external client, team of six. A model built to
+   be used: cheaper architecture when results tie, honest metric, output their platform reads.
+2. **Homelab** — Proxmox, Compose stacks in git, PBS backups. The strongest infrastructure
+   evidence and the least common.
+3. **Status publisher** — the small service that feeds this site. Proof of end-to-end work.
+4. **Messaging web app** — second-year university project, Python + SQL. Framed honestly
    as coursework, with a retrospective on what would be done differently now.
 
 ## Quality bar

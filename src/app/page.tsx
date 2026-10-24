@@ -21,9 +21,9 @@ export default function HomePage() {
           I build things that keep running.
         </h1>
         <p className="text-lg text-fg-muted leading-relaxed max-w-xl mb-8">
-          Third-year Computer Science student at Leiden University, looking for
-          a six-month graduation internship at a company where the software has
-          to keep working.
+          {about.role} at {about.university}, looking for a six-month
+          graduation internship at a company where the software has to keep
+          working.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
@@ -33,7 +33,7 @@ export default function HomePage() {
             View work
           </a>
           <a
-            href="/cv.pdf"
+            href={about.cv}
             className="inline-flex items-center px-5 py-2.5 rounded border border-border text-fg text-sm font-medium hover:border-fg-muted transition-colors"
           >
             Download CV

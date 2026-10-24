@@ -36,13 +36,13 @@ export const catCommand: Command = {
       };
     }
 
-    if (path === "/cv.pdf") {
+    if (path === about.cv) {
       return {
         output: (
           <div className="py-1 space-y-1">
             <p className="text-fg-muted">[binary file]</p>
-            <a href="/cv.pdf" className="text-accent hover:underline">
-              → Download: /cv.pdf
+            <a href={about.cv} className="text-accent hover:underline">
+              → Download: {about.cv}
             </a>
           </div>
         ),

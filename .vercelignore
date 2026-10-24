@@ -1,0 +1,2 @@
+# Never deploy the CV with street address and phone (see .gitignore)
+public/Abel_Deloo_CV.pdf

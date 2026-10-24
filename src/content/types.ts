@@ -24,6 +24,7 @@ export type About = {
   role: string;
   university: string;
   graduating: string;
+  cv: string; // path of the PDF in public/
   availability: {
     label: string; // short, for badges: "Available now"
     sentence: string; // full sentence for body copy and metadata

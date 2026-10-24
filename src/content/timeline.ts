@@ -1,36 +1,46 @@
 import type { TimelineEntry } from "./types";
 
-// Chronological, oldest first.
+// Chronological, oldest first. Dates follow the CV.
 export const timeline: TimelineEntry[] = [
   {
     year: 2022,
+    title: "Smartphone lessons for older adults",
+    description:
+      "Taught older adults how to use their phones. Explaining technology to someone who has never used a touchscreen is an exercise in clarity.",
+  },
+  {
+    year: 2023,
     title: "Started Computer Science at Leiden University",
-    description:
-      "Bachelor's programme, focusing on software engineering and systems.",
+    description: "Bachelor's programme. Expected graduation 2027.",
   },
   {
-    year: 2023,
-    title: "Messaging web app — university project",
-    description:
-      "Built a web-based messaging platform in Python and SQL as a second-year group project. First time designing a relational schema for a real use case.",
-  },
-  {
-    year: 2023,
-    title: "Home server — first setup",
+    year: 2024,
+    title: "Home server, first setup",
     description:
       "Repurposed an old Packard Bell laptop as a home server. Learned Docker, networking, and what happens when a service goes down at an inconvenient time.",
   },
   {
     year: 2024,
-    title: "Minor: Technology-based Entrepreneurship at TU Delft",
+    title: "Messaging web app, university project",
     description:
-      "Studied how technical decisions connect to business models. Built TerraceTime — a web app for real-time terrace availability — and deployed it on the home server.",
+      "Built a web-based messaging platform in Python and SQL as a second-year group project.",
   },
   {
-    year: 2024,
-    title: "Smartphone lessons — volunteer work",
+    year: 2025,
+    title: "Insect sound classifier for Naturalis",
     description:
-      "Teaching elderly residents how to use smartphones and tablets. Ongoing.",
+      "Team of six, external client: a model that identifies 459 insect species from raw field recordings, delivered as JSON their platform reads directly.",
+  },
+  {
+    year: 2025,
+    title: "Minor: Technology-based Entrepreneurship at TU Delft",
+    description:
+      "Completed with an average grade of 8. Built TerraceTime, a real-time seat availability app, validated through 26 interviews and user tests.",
+  },
+  {
+    year: 2025,
+    title: "Tutoring mathematics and physics",
+    description: "Secondary school students, 2025–2026.",
   },
   {
     year: 2026,
@@ -47,6 +57,7 @@ export const timeline: TimelineEntry[] = [
   {
     year: 2026,
     title: "Graduation internship",
-    description: "Available now for a six-month graduation internship.",
+    description:
+      "Available for six months, start date flexible: Q4 2026 or Q1 2027. MSc Data Science and AI Technology from September 2027.",
   },
 ];

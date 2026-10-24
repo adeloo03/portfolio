@@ -43,3 +43,6 @@ next-env.d.ts
 .vercel
 .env*
 !.env.example
+
+# Current CV has street address + phone; replaced by a web version. Remove this line then.
+public/Abel_Deloo_CV.pdf

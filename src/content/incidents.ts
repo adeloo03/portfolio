@@ -4,7 +4,7 @@ import type { Incident } from "./types";
 // were not written down at the time are marked approximate, never guessed.
 export const incidents: Incident[] = [
   {
-    date: "2023",
+    date: "2024",
     approximate: true,
     title: "Services dropping out on WiFi",
     impact: "Services on the server dropped out unpredictably.",

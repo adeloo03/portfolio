@@ -3,6 +3,43 @@ import type { Project } from "./types";
 // Order matches CLAUDE.md — do not reorder without discussion.
 export const projects: Project[] = [
   {
+    slug: "naturalis-insect-sounds",
+    title: "Insect Sound Classifier",
+    tagline:
+      "A model that identifies 459 insect species from raw field recordings, built for Naturalis Biodiversity Center to plug straight into their monitoring platform.",
+    stack: ["Python", "EfficientNet", "PaSST", "Audio ML", "Scrum"],
+    links: [],
+    body: [
+      {
+        heading: "The problem",
+        paragraphs: [
+          "Naturalis monitors biodiversity with microphones in the field. That produces far more audio than anyone can listen to. They needed a model that hears an insect and says which species it is, in a form their ARISE platform can take in without someone converting it by hand.",
+          "A university project for an external client, 2025, in a team of six, working in two-week Scrum sprints.",
+        ],
+      },
+      {
+        heading: "Two models, and choosing the cheaper one",
+        paragraphs: [
+          "We built the classifier on a learnable audio frontend and compared two architectures on it: a CNN (EfficientNet) and a spectrogram transformer (PaSST).",
+          "Their results were nearly identical. The CNN needed a fraction of the compute. For a model that has to run over large volumes of field audio, that settles it: the cheaper model is the better one when it is not worse.",
+        ],
+      },
+      {
+        heading: "Measuring it honestly",
+        paragraphs: [
+          "The data was heavily imbalanced: a few common species and a long tail of rare ones. Plain accuracy rewards a model for getting the common species right and ignoring the rest, so we evaluated with macro-averaged F1, where every species counts equally.",
+          "Classifying at genus level (196 classes) instead of species level (459) gave up some resolution for markedly better reliability.",
+        ],
+      },
+      {
+        heading: "Delivered to be used",
+        paragraphs: [
+          "The output is timestamped, confidence-scored JSON that the ARISE platform reads directly. A model that scores well in a notebook is not the deliverable; one that slots into the pipeline someone else runs is.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "homelab",
     title: "Home Lab",
     tagline:
