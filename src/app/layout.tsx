@@ -32,6 +32,9 @@ export const metadata: Metadata = {
     title: "Abel Deloo — I build things that keep running.",
     description: `CS student at Leiden University. Self-hosted homelab, real uptime numbers. ${about.availability.label}.`,
   },
+  icons: {
+    icon: "/favicon.ico",
+  },
   twitter: { card: "summary_large_image" },
   // canonical is set per page: a layout-level value would mark every page
   // as a duplicate of the homepage.
